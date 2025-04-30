@@ -1,4 +1,6 @@
 const std = @import("std");
+const builtin = @import("builtin");
+const native_os = builtin.os.tag;
 
 fn defineBool(b: bool) ?u1 {
     return if (b) 1 else null;
@@ -25,7 +27,7 @@ fn configureLibusb(
 
     m.addIncludePath(dep.path("libusb"));
 
-    if (target.isDarwin()) {
+    if (native_os.isDarwin()) {
         m.addIncludePath(dep.path("Xcode"));
     } else if (target.abi == .msvc) {
         m.addIncludePath(dep.path("msvc"));
@@ -151,13 +153,13 @@ fn addLibrary(
         .kind = .lib,
         .linkage = linkage,
 
-        .root_module = .{
+        .root_module = b.createModule(.{
             .target = target,
             .optimize = optimize,
-        },
+        }),
     });
 
-    configureLibusb(dep, &lib.root_module, config_header, options);
+    configureLibusb(dep, lib.root_module, config_header, options);
 
     lib.installHeader(dep.path("libusb/libusb.h"), "libusb.h");
 
@@ -219,7 +221,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    configureLibusb(dep, &lib_unit_tests.root_module, config_header, options);
+    configureLibusb(dep, lib_unit_tests.root_module, config_header, options);
 
     const test_step = b.step("test", "Run unit tests");
     test_step.dependOn(&b.addRunArtifact(lib_unit_tests).step);

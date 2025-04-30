@@ -146,7 +146,7 @@ pub const BOSType = enum(u8) {
     pub const usb_2_0_extension_size = 7;
     pub const ss_usb_device_capability_size = 10;
     pub const container_id_size = 20;
-    pub const platform_descriptor = 20;
+    pub const platform_descriptor_size = 20;
 
     pub const max_size = DescriptorType.bos_size + usb_2_0_extension_size + ss_usb_device_capability_size + container_id_size;
 };
