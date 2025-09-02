@@ -252,9 +252,11 @@ pub fn build(b: *std.Build) void {
     configureLibusb(dep, m, config_header, options);
 
     const lib_unit_tests = b.addTest(.{
-        .root_source_file = b.path("src/root.zig"),
-        .target = target,
-        .optimize = optimize,
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("src/root.zig"),
+            .target = target,
+            .optimize = optimize,
+        }),
     });
 
     configureLibusb(dep, lib_unit_tests.root_module, config_header, options);

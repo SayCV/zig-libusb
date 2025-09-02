@@ -1,7 +1,8 @@
 .{
-    .name = "libusb",
+    .name = .libusb,
     .version = "1.0.27+r0",
-    .minimum_zig_version = "0.13.0",
+    .fingerprint = 0x3e6dc4ccd6d7390d,
+    .minimum_zig_version = "0.15.0",
     .dependencies = .{
         .libusb = .{
             // use zip because windows can't handle a symlink in the tar
