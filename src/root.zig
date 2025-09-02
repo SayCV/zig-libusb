@@ -335,7 +335,7 @@ pub const EndpointDescriptor = extern struct {
         none = 0x0,
 
         /// Asynchronous
-        @"async" = 0x1,
+        async = 0x1,
 
         /// Adaptive
         adaptive = 0x2,
@@ -661,7 +661,7 @@ pub const BOSDescriptor = extern struct {
 
     /// bNumDeviceCap Device Capability Descriptors
     pub fn dev_capability(self: *const BOSDescriptor) []const BOSDeviceCapabilityDescriptor {
-        return (@as([*c]const BOSDeviceCapabilityDescriptor, @alignCast(@ptrCast(@as([*c]const u8, @ptrCast(self)) + @sizeOf(BOSDescriptor)))))[0..self.bNumDeviceCaps];
+        return (@as([*c]const BOSDeviceCapabilityDescriptor, @ptrCast(@alignCast(@as([*c]const u8, @ptrCast(self)) + @sizeOf(BOSDescriptor)))))[0..self.bNumDeviceCaps];
     }
 };
 
@@ -1123,7 +1123,7 @@ pub const Transfer = extern struct {
 
     /// Callback function. This will be invoked when the transfer completes,
     /// fails, or is cancelled.
-    callback: ?*const fn (*Transfer) callconv(.C) void,
+    callback: ?*const fn (*Transfer) callconv(.c) void,
 
     /// User context data. Useful for associating specific data to a transfer
     /// that can be accessed from within the callback function.
@@ -1146,7 +1146,7 @@ pub const Transfer = extern struct {
 
     /// Isochronous packet descriptors, for isochronous transfers only.
     pub fn iso_packet_desc(self: *const Transfer) []const ISOPacketDescriptor {
-        return (@as([*c]const ISOPacketDescriptor, @alignCast(@ptrCast(@as([*c]const u8, @ptrCast(self)) + @sizeOf(Transfer)))))[0..self.num_iso_packets];
+        return (@as([*c]const ISOPacketDescriptor, @ptrCast(@alignCast(@as([*c]const u8, @ptrCast(self)) + @sizeOf(Transfer)))))[0..self.num_iso_packets];
     }
 
     pub fn init(iso_packets: u31) !Transfer {
@@ -1441,7 +1441,7 @@ pub const ClaimedInterface = struct {
         timeout: c_uint,
 
         fn writeFn(context: *const anyopaque, bytes: []const u8) Error!usize {
-            const self: *const Writable = @alignCast(@ptrCast(context));
+            const self: *const Writable = @ptrCast(@alignCast(context));
             var written: c_int = 0;
             c.libusb_bulk_transfer(self.device_handle, self.endpoint, @constCast(bytes.ptr), @intCast(bytes.len), &written, self.timeout).result() catch |err| {
                 if (err != error.OperationTimedOut) {
@@ -1475,7 +1475,7 @@ pub const ClaimedInterface = struct {
         timeout: c_uint,
 
         fn readFn(context: *const anyopaque, buffer: []u8) Error!usize {
-            const self: *const Readable = @alignCast(@ptrCast(context));
+            const self: *const Readable = @ptrCast(@alignCast(context));
             var read: c_int = 0;
             c.libusb_bulk_transfer(self.device_handle, self.endpoint, buffer.ptr, @intCast(buffer.len), &read, self.timeout).result() catch |err| {
                 if (err != error.OperationTimedOut) {
@@ -1562,7 +1562,7 @@ test "init context log level" {
 test "init context log callback" {
     const ctx = try Context.init(.{
         .log_cb = (struct {
-            fn test_log_cb(_: *Context, _: LogLevel, _: [*c]const u8) callconv(.C) void {}
+            fn test_log_cb(_: *Context, _: LogLevel, _: [*c]const u8) callconv(.c) void {}
         }).test_log_cb,
     });
     defer ctx.deinit();

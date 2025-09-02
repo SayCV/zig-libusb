@@ -41,7 +41,7 @@ const Pollfd = root.Pollfd;
 const HotplugCallbackHandle = root.HotplugCallbackHandle;
 const HotplugEvent = root.HotplugEvent;
 
-pub const LogCallbackFn = fn (*Context, LogLevel, [*c]const u8) callconv(.C) void;
+pub const LogCallbackFn = fn (*Context, LogLevel, [*c]const u8) callconv(.c) void;
 
 /// Available option values for libusb_set_option() and libusb_init_context().
 pub const Option = enum(c_uint) {
@@ -128,7 +128,7 @@ pub extern fn libusb_init(
     /// Optional output location for context pointer. Only valid on return code
     /// 0.
     ctx: ?*?*Context,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Initialize libusb.
 ///
@@ -149,7 +149,7 @@ pub extern fn libusb_init_context(
     options: ?[*]const InitOption,
     /// Number of elements in the options array.
     num_options: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Deinitialize libusb.
 ///
@@ -158,7 +158,7 @@ pub extern fn libusb_init_context(
 pub extern fn libusb_exit(
     /// the context to deinitialize, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Deprecated.
 ///
@@ -170,7 +170,7 @@ pub extern fn libusb_set_debug(
     ctx: ?*Context,
     /// the log level
     level: LogLevel,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Set log handler.
 ///
@@ -193,11 +193,11 @@ pub extern fn libusb_set_log_cb(
     /// mode of callback function operation. Several modes can be selected for
     /// a single callback function, see libusb_log_cb_mode for a description.
     mode: LogCBMode,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Returns a pointer to const struct libusb_version with the version (major,
 /// minor, micro, nano and rc) of the running library.
-pub extern fn libusb_get_version() callconv(.C) *const Version;
+pub extern fn libusb_get_version() callconv(.c) *const Version;
 
 /// Check at runtime if the loaded library has a given capability.
 ///
@@ -208,7 +208,7 @@ pub extern fn libusb_get_version() callconv(.C) *const Version;
 pub extern fn libusb_has_capability(
     /// the `Capability` to check for
     capability: Capability,
-) callconv(.C) c_int;
+) callconv(.c) c_int;
 
 /// Returns a constant NULL-terminated string with the ASCII name of a libusb
 /// error or transfer status code.
@@ -217,7 +217,7 @@ pub extern fn libusb_has_capability(
 pub extern fn libusb_error_name(
     /// The libusb_error or libusb_transfer_status code to return the name of.
     errcode: c_int,
-) callconv(.C) [*c]const u8;
+) callconv(.c) [*c]const u8;
 
 /// Set the language, and only the language, not the encoding! used for
 /// translatable libusb messages.
@@ -248,7 +248,7 @@ pub extern fn libusb_setlocale(
     /// locale-string in the form of lang[_country_region][.codeset] or
     /// lang[-region], where lang is a 2 letter ISO 639-1 code
     locale: [*c]const u8,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Returns a constant string with a short description of the given error code,
 /// this description is intended for displaying to the end user and will be in
@@ -261,7 +261,7 @@ pub extern fn libusb_setlocale(
 pub extern fn libusb_strerror(
     /// the error code whose description is desired
     errcode: c_int,
-) callconv(.C) [*c]const u8;
+) callconv(.c) [*c]const u8;
 
 /// Returns a list of USB devices currently attached to the system.
 ///
@@ -285,7 +285,7 @@ pub extern fn libusb_get_device_list(
     /// output location for a list of devices. Must be later freed with
     /// libusb_free_device_list().
     list: *?[*]*Device,
-) callconv(.C) UsizeOrErrorCode;
+) callconv(.c) UsizeOrErrorCode;
 
 /// Frees a list of devices previously discovered using
 /// libusb_get_device_list().
@@ -297,7 +297,7 @@ pub extern fn libusb_free_device_list(
     list: [*]*Device,
     /// whether to unref the devices in the list
     unref_devices: bool,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Increment the reference count of a device.
 ///
@@ -305,7 +305,7 @@ pub extern fn libusb_free_device_list(
 pub extern fn libusb_ref_device(
     /// the device to reference
     dev: *Device,
-) callconv(.C) *Device;
+) callconv(.c) *Device;
 
 /// Decrement the reference count of a device.
 ///
@@ -314,7 +314,7 @@ pub extern fn libusb_ref_device(
 pub extern fn libusb_unref_device(
     /// the device to unreference
     dev: *Device,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Determine the bConfigurationValue of the currently active configuration.
 ///
@@ -338,7 +338,7 @@ pub extern fn libusb_get_configuration(
     /// output location for the bConfigurationValue of the active configuration
     /// (only valid for return code 0)
     config: *c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Get the USB device descriptor for a given device.
 ///
@@ -353,7 +353,7 @@ pub extern fn libusb_get_device_descriptor(
     dev: *Device,
     /// output location for the descriptor data
     desc: *DeviceDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Get the USB configuration descriptor for the currently active configuration.
 ///
@@ -371,7 +371,7 @@ pub extern fn libusb_get_active_config_descriptor(
     /// was returned. Must be freed with libusb_free_config_descriptor() after
     /// use.
     config: *?*ConfigDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Get a USB configuration descriptor based on its index.
 ///
@@ -391,7 +391,7 @@ pub extern fn libusb_get_config_descriptor(
     /// was returned. Must be freed with libusb_free_config_descriptor() after
     /// use.
     config: *?*ConfigDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Get a USB configuration descriptor with a specific bConfigurationValue.
 ///
@@ -411,7 +411,7 @@ pub extern fn libusb_get_config_descriptor_by_value(
     /// was returned. Must be freed with libusb_free_config_descriptor() after
     /// use.
     config: *?*ConfigDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Free a configuration descriptor obtained from
 /// libusb_get_active_config_descriptor() or libusb_get_config_descriptor().
@@ -421,7 +421,7 @@ pub extern fn libusb_get_config_descriptor_by_value(
 pub extern fn libusb_free_config_descriptor(
     /// the configuration descriptor to free
     config: ?*ConfigDescriptor,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get an endpoints superspeed endpoint companion descriptor (if any)
 ///
@@ -439,7 +439,7 @@ pub extern fn libusb_get_ss_endpoint_companion_descriptor(
     /// valid if 0 was returned. Must be freed with
     /// libusb_free_ss_endpoint_companion_descriptor() after use.
     ep_comp: *?*SSEndpointCompanionDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Free a superspeed endpoint companion descriptor obtained from
 /// libusb_get_ss_endpoint_companion_descriptor().
@@ -449,7 +449,7 @@ pub extern fn libusb_get_ss_endpoint_companion_descriptor(
 pub extern fn libusb_free_ss_endpoint_companion_descriptor(
     /// the superspeed endpoint companion descriptor to free
     ep_comp: ?*SSEndpointCompanionDescriptor,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get a Binary Object Store (BOS) descriptor This is a BLOCKING function,
 /// which will send requests to the device.
@@ -464,7 +464,7 @@ pub extern fn libusb_get_bos_descriptor(
     /// output location for the BOS descriptor. Only valid if 0 was returned.
     /// Must be freed with libusb_free_bos_descriptor() after use.
     bos: *?*BOSDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Free a BOS descriptor obtained from libusb_get_bos_descriptor().
 ///
@@ -473,7 +473,7 @@ pub extern fn libusb_get_bos_descriptor(
 pub extern fn libusb_free_bos_descriptor(
     /// the BOS descriptor to free
     bos: ?*BOSDescriptor,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get an USB 2.0 Extension descriptor.
 ///
@@ -491,7 +491,7 @@ pub extern fn libusb_get_usb_2_0_extension_descriptor(
     /// was returned. Must be freed with
     /// libusb_free_usb_2_0_extension_descriptor() after use.
     usb_2_0_extension: *?*USB20ExtensionDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Free a USB 2.0 Extension descriptor obtained from
 /// libusb_get_usb_2_0_extension_descriptor().
@@ -501,7 +501,7 @@ pub extern fn libusb_get_usb_2_0_extension_descriptor(
 pub extern fn libusb_free_usb_2_0_extension_descriptor(
     /// the USB 2.0 Extension descriptor to free
     usb_2_0_extension: ?*USB20ExtensionDescriptor,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get a SuperSpeed USB Device Capability descriptor.
 ///
@@ -519,7 +519,7 @@ pub extern fn libusb_get_ss_usb_device_capability_descriptor(
     /// Only valid if 0 was returned. Must be freed with
     /// libusb_free_ss_usb_device_capability_descriptor() after use.
     ss_usb_device_cap: *?*SSUSBDeviceCapabilityDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Free a SuperSpeed USB Device Capability descriptor obtained from
 /// libusb_get_ss_usb_device_capability_descriptor().
@@ -529,7 +529,7 @@ pub extern fn libusb_get_ss_usb_device_capability_descriptor(
 pub extern fn libusb_free_ss_usb_device_capability_descriptor(
     /// the SuperSpeed USB Device Capability descriptor to free
     ss_usb_device_cap: ?*SSUSBDeviceCapabilityDescriptor,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get a Container ID descriptor.
 ///
@@ -546,7 +546,7 @@ pub extern fn libusb_get_container_id_descriptor(
     /// returned. Must be freed with libusb_free_container_id_descriptor() after
     /// use
     container_id: *?*ContainerIdDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Free a Container ID descriptor obtained from
 /// libusb_get_container_id_descriptor().
@@ -556,7 +556,7 @@ pub extern fn libusb_get_container_id_descriptor(
 pub extern fn libusb_free_container_id_descriptor(
     /// the Container ID descriptor to free
     container_id: ?*ContainerIdDescriptor,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get a platform descriptor.
 ///
@@ -576,7 +576,7 @@ pub extern fn libusb_get_platform_descriptor(
     /// returned. Must be freed with libusb_free_platform_descriptor() after
     /// use.
     platform_descriptor: *?*PlatformDescriptor,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Free a platform descriptor obtained from libusb_get_platform_descriptor().
 ///
@@ -585,13 +585,13 @@ pub extern fn libusb_get_platform_descriptor(
 pub extern fn libusb_free_platform_descriptor(
     /// the Platform descriptor to free
     platform_descriptor: *PlatformDescriptor,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get the number of the bus that a device is connected to.
 pub extern fn libusb_get_bus_number(
     /// a device
     dev: *Device,
-) callconv(.C) u8;
+) callconv(.c) u8;
 
 /// Get the number of the port that a device is connected to.
 ///
@@ -608,7 +608,7 @@ pub extern fn libusb_get_bus_number(
 pub extern fn libusb_get_port_number(
     /// a device
     dev: *Device,
-) callconv(.C) u8;
+) callconv(.c) u8;
 
 /// Get the list of all port numbers from root for the specified device.
 ///
@@ -625,7 +625,7 @@ pub extern fn libusb_get_port_numbers(
     /// the maximum length of the array. As per the USB 3.0 specs, the current
     /// maximum limit for the depth is 7.
     port_numbers_len: c_int,
-) callconv(.C) U32OrErrorCode;
+) callconv(.c) U32OrErrorCode;
 
 /// Deprecated.
 ///
@@ -640,7 +640,7 @@ pub extern fn libusb_get_port_path(
     /// the maximum length of the array. As per the USB 3.0 specs, the current
     /// maximum limit for the depth is 7.
     path_length: u8,
-) callconv(.C) c_int;
+) callconv(.c) c_int;
 
 /// Get the the parent from the specified device.
 ///
@@ -654,7 +654,7 @@ pub extern fn libusb_get_port_path(
 pub extern fn libusb_get_parent(
     /// a device
     dev: *Device,
-) callconv(.C) ?*Device;
+) callconv(.c) ?*Device;
 
 /// Get the address of the device on the bus it is connected to.
 ///
@@ -662,13 +662,13 @@ pub extern fn libusb_get_parent(
 pub extern fn libusb_get_device_address(
     /// a device
     dev: *Device,
-) callconv(.C) u8;
+) callconv(.c) u8;
 
 /// Get the negotiated connection speed for a device.
 ///
 /// Returns a libusb_speed code, where LIBUSB_SPEED_UNKNOWN means that the OS
 /// doesn't know or doesn't support returning the negotiated speed.
-pub extern fn libusb_get_device_speed(dev: ?*Device) callconv(.C) Speed;
+pub extern fn libusb_get_device_speed(dev: ?*Device) callconv(.c) Speed;
 
 /// Convenience function to retrieve the wMaxPacketSize value for a particular
 /// endpoint in the active device configuration.
@@ -678,7 +678,7 @@ pub extern fn libusb_get_device_speed(dev: ?*Device) callconv(.C) Speed;
 /// instead. It simply returns the wMaxPacketSize value without considering its
 /// contents. If you're dealing with isochronous transfers, you probably want
 /// libusb_get_max_iso_packet_size() instead.
-pub extern fn libusb_get_max_packet_size(dev: ?*Device, endpoint: u8) callconv(.C) c_int;
+pub extern fn libusb_get_max_packet_size(dev: ?*Device, endpoint: u8) callconv(.c) c_int;
 
 /// Calculate the maximum packet size which a specific endpoint is capable is
 /// sending or receiving in the duration of 1 microframe.
@@ -714,7 +714,7 @@ pub extern fn libusb_get_max_iso_packet_size(
     dev: *Device,
     /// address of the endpoint in question
     endpoint: u8,
-) callconv(.C) U32OrErrorCode;
+) callconv(.c) U32OrErrorCode;
 
 /// Calculate the maximum packet size which a specific endpoint is capable of
 /// sending or receiving in the duration of 1 microframe.
@@ -750,7 +750,7 @@ pub extern fn libusb_get_max_alt_packet_size(
     alternate_setting: c_int,
     /// address of the endpoint in question
     endpoint: u8,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Get an array of interface association descriptors (IAD) for a given
 /// configuration.
@@ -773,7 +773,7 @@ pub extern fn libusb_get_interface_association_descriptors(
     /// In this case the iad_array is still output, but will have 'length'
     /// field set to 0, and iad field set to NULL.
     iad_array: *?*InterfaceAssociationDescriptorArray,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Get an array of interface association descriptors (IAD) for the currently
 /// active configuration.
@@ -794,7 +794,7 @@ pub extern fn libusb_get_active_interface_association_descriptors(
     /// In this case the iad_array is still output, but will have 'length'
     /// field set to 0, and iad field set to NULL.
     iad_array: *?*InterfaceAssociationDescriptorArray,
-) callconv(.C) c_int;
+) callconv(.c) c_int;
 
 /// Free an array of interface association descriptors (IADs) obtained from
 /// libusb_get_interface_association_descriptors() or
@@ -805,7 +805,7 @@ pub extern fn libusb_get_active_interface_association_descriptors(
 pub extern fn libusb_free_interface_association_descriptors(
     /// the IAD array to free
     iad_array: ?*InterfaceAssociationDescriptorArray,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Wrap a platform-specific system device handle and obtain a libusb device
 /// handle for the underlying device.
@@ -846,7 +846,7 @@ pub extern fn libusb_wrap_sys_device(
     /// dev_handle output location for the returned device handle pointer. Only
     /// populated when the return code is 0.
     dev_handle: *?*DeviceHandle,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Open a device and obtain a device handle.
 ///
@@ -870,7 +870,7 @@ pub extern fn libusb_open(
     /// dev_handle output location for the returned device handle pointer. Only
     /// populated when the return code is 0.
     dev_handle: *?*DeviceHandle,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Close a device handle.
 ///
@@ -883,7 +883,7 @@ pub extern fn libusb_open(
 pub extern fn libusb_close(
     /// the device handle to close
     dev_handle: *DeviceHandle,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get the underlying device for a device handle.
 ///
@@ -892,7 +892,7 @@ pub extern fn libusb_close(
 pub extern fn libusb_get_device(
     /// a device handle
     dev_handle: *DeviceHandle,
-) callconv(.C) *Device;
+) callconv(.c) *Device;
 
 /// Set the active configuration for a device.
 ///
@@ -947,7 +947,7 @@ pub extern fn libusb_set_configuration(
     /// the bConfigurationValue of the configuration you wish to activate, or -1
     /// if you wish to put the device in an unconfigured state
     configuration: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Claim an interface on a given device handle.
 ///
@@ -978,7 +978,7 @@ pub extern fn libusb_claim_interface(
     dev_handle: *DeviceHandle,
     /// the bInterfaceNumber of the interface you wish to claim
     interface_number: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Release an interface previously claimed with libusb_claim_interface().
 ///
@@ -1000,7 +1000,7 @@ pub extern fn libusb_release_interface(
     dev_handle: *DeviceHandle,
     /// the bInterfaceNumber of the previously-claimed interface
     interface_number: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Convenience function for finding a device with a particular
 /// idVendor/idProduct combination.
@@ -1022,7 +1022,7 @@ pub extern fn libusb_open_device_with_vid_pid(
     vendor_id: u16,
     /// the idProduct value to search for
     product_id: u16,
-) callconv(.C) ?*DeviceHandle;
+) callconv(.c) ?*DeviceHandle;
 
 /// Activate an alternate setting for an interface.
 ///
@@ -1048,7 +1048,7 @@ pub extern fn libusb_set_interface_alt_setting(
     interface_number: c_int,
     /// the bAlternateSetting of the alternate setting to activate
     alternate_setting: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Clear the halt/stall condition for an endpoint.
 ///
@@ -1070,7 +1070,7 @@ pub extern fn libusb_clear_halt(
     dev_handle: *DeviceHandle,
     /// the endpoint to clear halt status
     endpoint: u8,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Perform a USB port reset to reinitialize a device.
 ///
@@ -1092,7 +1092,7 @@ pub extern fn libusb_clear_halt(
 pub extern fn libusb_reset_device(
     /// a handle of the device to reset
     dev_handle: *DeviceHandle,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Allocate up to num_streams usb bulk streams on the specified endpoints.
 ///
@@ -1120,7 +1120,7 @@ pub extern fn libusb_alloc_streams(
     endpoints: [*]u8,
     /// length of the endpoints array
     num_endpoints: c_int,
-) callconv(.C) U32OrErrorCode;
+) callconv(.c) U32OrErrorCode;
 
 /// Free usb bulk streams allocated with libusb_alloc_streams().
 ///
@@ -1136,7 +1136,7 @@ pub extern fn libusb_free_streams(
     endpoints: [*]u8,
     /// length of the endpoints array
     num_endpoints: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Attempts to allocate a block of persistent DMA memory suitable for transfers
 /// against the given device.
@@ -1165,7 +1165,7 @@ pub extern fn libusb_dev_mem_alloc(
     dev_handle: *DeviceHandle,
     /// size of desired data buffer
     length: usize,
-) callconv(.C) ?[*]u8;
+) callconv(.c) ?[*]u8;
 
 /// Free device memory allocated with libusb_dev_mem_alloc().
 ///
@@ -1177,7 +1177,7 @@ pub extern fn libusb_dev_mem_free(
     buffer: [*]u8,
     /// size of previously allocated memory
     length: usize,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Determine if a kernel driver is active on an interface.
 ///
@@ -1197,7 +1197,7 @@ pub extern fn libusb_kernel_driver_active(
     dev_handle: *DeviceHandle,
     /// the interface to check
     interface_number: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Detach a kernel driver from an interface.
 ///
@@ -1213,7 +1213,7 @@ pub extern fn libusb_detach_kernel_driver(
     dev_handle: ?*DeviceHandle,
     /// the interface to detach the driver from
     interface_number: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Re-attach an interface's kernel driver, which was previously detached using
 /// libusb_detach_kernel_driver().
@@ -1233,7 +1233,7 @@ pub extern fn libusb_attach_kernel_driver(
     dev_handle: *DeviceHandle,
     /// the interface to attach the driver to
     interface_number: c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Enable/disable libusb's automatic kernel driver detachment.
 ///
@@ -1256,7 +1256,7 @@ pub extern fn libusb_set_auto_detach_kernel_driver(
     dev_handle: ?*DeviceHandle,
     /// whether to enable or disable auto kernel driver detachment
     enable: bool,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Allocate a libusb transfer with a specified number of isochronous packet
 /// descriptors.
@@ -1280,7 +1280,7 @@ pub extern fn libusb_set_auto_detach_kernel_driver(
 pub extern fn libusb_alloc_transfer(
     /// number of isochronous packet descriptors to allocate. Must be non-negative.
     iso_packets: c_int,
-) callconv(.C) ?*Transfer;
+) callconv(.c) ?*Transfer;
 
 /// Submit a transfer.
 ///
@@ -1299,7 +1299,7 @@ pub extern fn libusb_alloc_transfer(
 pub extern fn libusb_submit_transfer(
     /// the transfer to submit
     transfer: *Transfer,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Asynchronously cancel a previously submitted transfer.
 ///
@@ -1333,7 +1333,7 @@ pub extern fn libusb_submit_transfer(
 pub extern fn libusb_cancel_transfer(
     /// the transfer to cancel
     transfer: *Transfer,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Free a transfer structure.
 ///
@@ -1352,7 +1352,7 @@ pub extern fn libusb_cancel_transfer(
 pub extern fn libusb_free_transfer(
     /// the transfer to free
     transfer: ?*Transfer,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Set a transfers bulk stream id.
 ///
@@ -1365,7 +1365,7 @@ pub extern fn libusb_transfer_set_stream_id(
     transfer: *Transfer,
     /// the stream id to set
     stream_id: u32,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Get a transfers bulk stream id.
 ///
@@ -1375,7 +1375,7 @@ pub extern fn libusb_transfer_set_stream_id(
 pub extern fn libusb_transfer_get_stream_id(
     /// the transfer to get the stream id for
     transfer: *Transfer,
-) callconv(.C) u32;
+) callconv(.c) u32;
 
 /// Perform a USB control transfer.
 ///
@@ -1415,7 +1415,7 @@ pub extern fn libusb_control_transfer(
     /// up due to no response being received. For an unlimited timeout, use
     /// value 0.
     timeout: c_uint,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Perform a USB bulk transfer.
 ///
@@ -1467,7 +1467,7 @@ pub extern fn libusb_bulk_transfer(
     /// up due to no response being received. For an unlimited timeout, use
     /// value 0.
     timeout: c_uint,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Perform a USB interrupt transfer.
 ///
@@ -1513,7 +1513,7 @@ pub extern fn libusb_interrupt_transfer(
     actual_length: ?*c_int,
     /// timeout (in milliseconds) that this function should wait before giving up due to no response being received. For an unlimited timeout, use value 0.
     timeout: c_uint,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Retrieve a string descriptor in C style ASCII.
 ///
@@ -1530,7 +1530,7 @@ pub extern fn libusb_get_string_descriptor_ascii(
     data: [*]u8,
     /// size of data buffer
     length: c_int,
-) callconv(.C) U32OrErrorCode;
+) callconv(.c) U32OrErrorCode;
 
 /// Attempt to acquire the event handling lock.
 ///
@@ -1546,7 +1546,7 @@ pub extern fn libusb_get_string_descriptor_ascii(
 pub extern fn libusb_try_lock_events(
     /// the context to operate on, or NULL for the default context [Multi-threaded applications and asynchronous I/O](https://libusb.sourceforge.io/api-1.0/libusb_mtasync.html)
     ctx: ?*Context,
-) callconv(.C) c_int;
+) callconv(.c) c_int;
 
 /// Acquire the event handling lock, blocking until successful acquisition if it is contended.
 ///
@@ -1558,7 +1558,7 @@ pub extern fn libusb_try_lock_events(
 pub extern fn libusb_lock_events(
     /// the context to operate on, or NULL for the default context [Multi-threaded applications and asynchronous I/O](https://libusb.sourceforge.io/api-1.0/libusb_mtasync.html)
     ctx: ?*Context,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Release the lock previously acquired with libusb_try_lock_events() or libusb_lock_events().
 ///
@@ -1566,7 +1566,7 @@ pub extern fn libusb_lock_events(
 pub extern fn libusb_unlock_events(
     /// the context to operate on, or NULL for the default context [Multi-threaded applications and asynchronous I/O](https://libusb.sourceforge.io/api-1.0/libusb_mtasync.html)
     ctx: ?*Context,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Determine if it is still OK for this thread to be doing event handling.
 ///
@@ -1582,7 +1582,7 @@ pub extern fn libusb_unlock_events(
 pub extern fn libusb_event_handling_ok(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) c_int;
+) callconv(.c) c_int;
 
 /// Determine if an active thread is handling events (i.e. if anyone is holding
 /// the event handling lock).
@@ -1593,7 +1593,7 @@ pub extern fn libusb_event_handling_ok(
 pub extern fn libusb_event_handler_active(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) c_int;
+) callconv(.c) c_int;
 
 /// Interrupt any active thread that is handling events.
 ///
@@ -1603,7 +1603,7 @@ pub extern fn libusb_event_handler_active(
 pub extern fn libusb_interrupt_event_handler(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Acquire the event waiters lock.
 ///
@@ -1615,13 +1615,13 @@ pub extern fn libusb_interrupt_event_handler(
 pub extern fn libusb_lock_event_waiters(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Release the event waiters lock.
 pub extern fn libusb_unlock_event_waiters(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Wait for another thread to signal completion of an event.
 ///
@@ -1645,7 +1645,7 @@ pub extern fn libusb_wait_for_event(
     ctx: ?*Context,
     /// maximum timeout for this blocking function. A NULL value indicates unlimited timeout.
     tv: ?*std.c.timeval,
-) callconv(.C) U32OrErrorCode;
+) callconv(.c) U32OrErrorCode;
 
 /// Handle any pending events.
 ///
@@ -1659,7 +1659,7 @@ pub extern fn libusb_handle_events_timeout(
     ctx: ?*Context,
     /// the maximum time to block waiting for events, or an all zero timeval struct for non-blocking mode
     tv: *std.c.timeval,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Handle any pending events.
 ///
@@ -1682,7 +1682,7 @@ pub extern fn libusb_handle_events_timeout_completed(
     tv: *std.c.timeval,
     /// pointer to completion integer to check, or NULL
     completed: ?*c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Handle any pending events in blocking mode.
 ///
@@ -1694,7 +1694,7 @@ pub extern fn libusb_handle_events_timeout_completed(
 pub extern fn libusb_handle_events(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Handle any pending events in blocking mode.
 ///
@@ -1708,7 +1708,7 @@ pub extern fn libusb_handle_events_completed(
     ctx: ?*Context,
     /// pointer to completion integer to check, or NULL
     completed: ?*c_int,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Handle any pending events by polling file descriptors, without checking if any other threads are already doing so.
 ///
@@ -1725,7 +1725,7 @@ pub extern fn libusb_handle_events_locked(
     ctx: ?*Context,
     /// the maximum time to block waiting for events, or zero for non-blocking mode
     tv: *std.c.timeval,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Determines whether your application must apply special timing considerations when monitoring libusb's file descriptors.
 ///
@@ -1741,7 +1741,7 @@ pub extern fn libusb_handle_events_locked(
 pub extern fn libusb_pollfds_handle_timeouts(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) c_int;
+) callconv(.c) c_int;
 
 /// Determine the next internal timeout that libusb needs to handle.
 ///
@@ -1761,7 +1761,7 @@ pub extern fn libusb_get_next_timeout(
     ctx: ?*Context,
     /// output location for a relative time against the current clock in which libusb must be called into in order to process timeout events
     tv: *std.c.timeval,
-) callconv(.C) U32OrErrorCode;
+) callconv(.c) U32OrErrorCode;
 
 /// Retrieve a list of file descriptors that should be polled by your main loop as libusb event sources.
 ///
@@ -1776,7 +1776,7 @@ pub extern fn libusb_get_next_timeout(
 pub extern fn libusb_get_pollfds(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
-) callconv(.C) [*c]*const Pollfd;
+) callconv(.c) [*c]*const Pollfd;
 
 /// Free a list of libusb_pollfd structures.
 ///
@@ -1788,7 +1788,7 @@ pub extern fn libusb_get_pollfds(
 pub extern fn libusb_free_pollfds(
     /// the list of libusb_pollfd structures to free
     pollfds: ?[*c]*const Pollfd,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Register notification functions for file descriptor additions/removals.
 ///
@@ -1803,12 +1803,12 @@ pub extern fn libusb_set_pollfd_notifiers(
     /// the context to operate on, or NULL for the default context
     ctx: ?*Context,
     /// pointer to function for addition notifications
-    added_cb: ?*const fn (c_int, c_short, ?*anyopaque) callconv(.C) void,
+    added_cb: ?*const fn (c_int, c_short, ?*anyopaque) callconv(.c) void,
     /// pointer to function for removal notifications
-    removed_cb: ?*const fn (c_int, ?*anyopaque) callconv(.C) void,
+    removed_cb: ?*const fn (c_int, ?*anyopaque) callconv(.c) void,
     /// User data to be passed back to callbacks (useful for passing context information)
     user_data: ?*anyopaque,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Register a hotplug callback function
 ///
@@ -1846,12 +1846,12 @@ pub extern fn libusb_hotplug_register_callback(
     /// the device class to match or LIBUSB_HOTPLUG_MATCH_ANY
     dev_class: c_int,
     /// the function to be invoked on a matching event/device
-    cb_fn: *const fn (*Context, *Device, HotplugEvent, ?*anyopaque) callconv(.C) c_int,
+    cb_fn: *const fn (*Context, *Device, HotplugEvent, ?*anyopaque) callconv(.c) c_int,
     /// user data to pass to the callback function
     user_data: ?*anyopaque,
     /// pointer to store the handle of the allocated callback (can be NULL)
     callback_handle: *HotplugCallbackHandle,
-) callconv(.C) ErrorCode;
+) callconv(.c) ErrorCode;
 
 /// Deregisters a hotplug callback.
 ///
@@ -1864,7 +1864,7 @@ pub extern fn libusb_hotplug_deregister_callback(
     ctx: ?*Context,
     /// the handle of the callback to deregister
     callback_handle: HotplugCallbackHandle,
-) callconv(.C) void;
+) callconv(.c) void;
 
 /// Gets the user_data associated with a hotplug callback.
 ///
@@ -1874,7 +1874,7 @@ pub extern fn libusb_hotplug_get_user_data(
     ctx: ?*Context,
     /// the handle of the callback to get the user_data of
     callback_handle: HotplugCallbackHandle,
-) callconv(.C) ?*anyopaque;
+) callconv(.c) ?*anyopaque;
 
 /// Set an option in the library.
 ///
@@ -1898,7 +1898,7 @@ pub extern fn libusb_set_option(
     option: Option,
     /// any required arguments for the specified option
     ...,
-) callconv(.C) c_int;
+) callconv(.c) c_int;
 
 test "init context basic" {
     var ctx: ?*Context = null;
@@ -1929,7 +1929,7 @@ test "init context log callback" {
             .option = .log_cb,
             .value = .{
                 .log_cb = (struct {
-                    fn test_log_cb(_: *Context, _: LogLevel, _: [*c]const u8) callconv(.C) void {}
+                    fn test_log_cb(_: *Context, _: LogLevel, _: [*c]const u8) callconv(.c) void {}
                 }).test_log_cb,
             },
         },
