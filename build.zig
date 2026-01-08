@@ -124,14 +124,14 @@ fn configureLibusb(
             },
         });
         m.linkSystemLibrary("be", .{});
-    } else if (target.os.tag == .solaris) {
-        m.addCSourceFiles(.{
-            .root = dep.path("libusb/os"),
-            .files = &.{
-                "sunos_usb.cpp",
-            },
-        });
-        m.linkSystemLibrary("devinfo", .{});
+        // } else if (target.os.tag == .solaris) {
+        //     m.addCSourceFiles(.{
+        //         .root = dep.path("libusb/os"),
+        //         .files = &.{
+        //             "sunos_usb.cpp",
+        //         },
+        //     });
+        //     m.linkSystemLibrary("devinfo", .{});
     }
 }
 
