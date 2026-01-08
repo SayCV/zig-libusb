@@ -1436,7 +1436,7 @@ pub const ClaimedInterface = struct {
     }
 
     pub const Writable = struct {
-        interface: std.Io.Writer,
+        interface: *std.Io.Writer,
         device_handle: *DeviceHandle,
         endpoint: u8,
         timeout: c_uint,
@@ -1481,7 +1481,7 @@ pub const ClaimedInterface = struct {
     }
 
     pub const Readable = struct {
-        interface: std.Io.Reader,
+        interface: *std.Io.Reader,
         device_handle: *DeviceHandle,
         endpoint: u8,
         timeout: c_uint,
