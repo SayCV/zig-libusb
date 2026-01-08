@@ -1436,11 +1436,13 @@ pub const ClaimedInterface = struct {
     }
 
     pub const Writable = struct {
+        interface: std.Io.Writer,
         device_handle: *DeviceHandle,
         endpoint: u8,
         timeout: c_uint,
 
-        fn writeFn(context: *const anyopaque, bytes: []const u8) Error!usize {
+        fn writeFn(context: *const anyopaque, bytes: []const u8, splat: usize) Error!usize {
+            _ = splat;
             const self: *const Writable = @ptrCast(@alignCast(context));
             var written: c_int = 0;
             c.libusb_bulk_transfer(self.device_handle, self.endpoint, @constCast(bytes.ptr), @intCast(bytes.len), &written, self.timeout).result() catch |err| {
@@ -1452,11 +1454,19 @@ pub const ClaimedInterface = struct {
             return @intCast(written);
         }
 
-        pub fn writer(self: *const Writable) std.Io.Writer {
-            return .{
-                .context = self,
-                .writeFn = writeFn,
+        fn drain(self: *const Readable, data: []const []const u8, splat: usize) std.Io.Reader.StreamError!usize {
+            return self.writeFn(data, splat);
+        }
+
+        pub fn writer(self: *const Writable, buffer: []u8) std.Io.Writer {
+            self.interface = .{
+                .buffer = buffer,
+                .end = 0,
+                .vtable = &.{
+                    .drain = drain,
+                },
             };
+            return &self.interface;
         }
     };
 
@@ -1470,6 +1480,7 @@ pub const ClaimedInterface = struct {
     }
 
     pub const Readable = struct {
+        interface: std.Io.Reader,
         device_handle: *DeviceHandle,
         endpoint: u8,
         timeout: c_uint,
@@ -1485,12 +1496,35 @@ pub const ClaimedInterface = struct {
 
             return @intCast(read);
         }
+        fn readVec(self: *const Readable, data: [][]u8) Error!usize {
+            return self.readFn(data);
+        }
 
-        pub fn reader(self: *const Readable) std.Io.Reader {
-            return .{
-                .context = self,
-                .readFn = readFn,
+        fn stream(self: *const Readable, w: *std.Io.Writer, limit: std.Io.Limit) std.Io.Reader.StreamError!usize {
+            _ = self;
+            _ = w;
+            _ = limit;
+            @panic("TODO");
+        }
+
+        fn discard(self: *const Readable, limit: std.Io.Limit) Error!usize {
+            _ = self;
+            _ = limit;
+            @panic("TODO");
+        }
+
+        pub fn reader(self: *const Readable, buffer: []u8) std.Io.Reader {
+            self.interface = .{
+                .buffer = buffer,
+                .seek = 0,
+                .end = 0,
+                .vtable = &.{
+                    .readVec = readVec,
+                    .stream = stream,
+                    .discard = discard,
+                },
             };
+            return &self.interface;
         }
     };
 
