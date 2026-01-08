@@ -1470,9 +1470,10 @@ pub const ClaimedInterface = struct {
         }
     };
 
-    pub fn writable(self: ClaimedInterface, endpoint: Endpoint, timeout: u32) Writable {
+    pub fn writable(self: ClaimedInterface, w: *std.Io.Writer, endpoint: Endpoint, timeout: u32) Writable {
         std.debug.assert(endpoint.direction == .output);
         return .{
+            .interface = w,
             .device_handle = self.device_handle,
             .endpoint = endpoint.toU8(),
             .timeout = @intCast(timeout),
@@ -1528,9 +1529,10 @@ pub const ClaimedInterface = struct {
         }
     };
 
-    pub fn readable(self: ClaimedInterface, endpoint: Endpoint, timeout: u32) Readable {
+    pub fn readable(self: ClaimedInterface, r: *std.Io.Reader, endpoint: Endpoint, timeout: u32) Readable {
         std.debug.assert(endpoint.direction == .input);
         return .{
+            .interface = r,
             .device_handle = self.device_handle,
             .endpoint = endpoint.toU8(),
             .timeout = @intCast(timeout),
