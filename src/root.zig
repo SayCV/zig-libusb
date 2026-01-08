@@ -1452,7 +1452,7 @@ pub const ClaimedInterface = struct {
             return @intCast(written);
         }
 
-        pub fn writer(self: *const Writable) std.io.AnyWriter {
+        pub fn writer(self: *const Writable) std.Io.Writer {
             return .{
                 .context = self,
                 .writeFn = writeFn,
@@ -1486,7 +1486,7 @@ pub const ClaimedInterface = struct {
             return @intCast(read);
         }
 
-        pub fn reader(self: *const Readable) std.io.AnyReader {
+        pub fn reader(self: *const Readable) std.Io.Reader {
             return .{
                 .context = self,
                 .readFn = readFn,
