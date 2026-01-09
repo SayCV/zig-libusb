@@ -1436,12 +1436,13 @@ pub const ClaimedInterface = struct {
     }
 
     pub const Writable = struct {
-        interface: *std.Io.Writer,
+        out: *std.Io.Writer,
+        interface: std.Io.Writer,
         device_handle: *DeviceHandle,
         endpoint: u8,
         timeout: c_uint,
 
-        fn writeFn(context: *const anyopaque, bytes: []const u8, splat: usize) Error!usize {
+        fn writeFn(context: *std.Io.Writer, bytes: []const u8, splat: usize) Error!usize {
             _ = splat;
             const self: *const Writable = @ptrCast(@alignCast(context));
             var written: c_int = 0;
@@ -1454,11 +1455,11 @@ pub const ClaimedInterface = struct {
             return @intCast(written);
         }
 
-        fn drain(self: *const Readable, data: []const []const u8, splat: usize) std.Io.Reader.StreamError!usize {
-            return self.writeFn(data, splat);
+        fn drain(self: *std.Io.Writer, data: []const []const u8, splat: usize) std.Io.Writer.Error!usize {
+            return writeFn(self, data[0], splat) catch return error.WriteFailed;
         }
 
-        pub fn writer(self: *const Writable, buffer: []u8) std.Io.Writer {
+        pub fn writer(self: *Writable, buffer: []u8) *std.Io.Writer {
             self.interface = .{
                 .buffer = buffer,
                 .end = 0,
@@ -1473,7 +1474,8 @@ pub const ClaimedInterface = struct {
     pub fn writable(self: ClaimedInterface, w: *std.Io.Writer, endpoint: Endpoint, timeout: u32) Writable {
         std.debug.assert(endpoint.direction == .output);
         return .{
-            .interface = w,
+            .out = w,
+            .interface = undefined,
             .device_handle = self.device_handle,
             .endpoint = endpoint.toU8(),
             .timeout = @intCast(timeout),
@@ -1481,12 +1483,13 @@ pub const ClaimedInterface = struct {
     }
 
     pub const Readable = struct {
-        interface: *std.Io.Reader,
+        in: *std.Io.Reader,
+        interface: std.Io.Reader,
         device_handle: *DeviceHandle,
         endpoint: u8,
         timeout: c_uint,
 
-        fn readFn(context: *const anyopaque, buffer: []u8) Error!usize {
+        fn readFn(context: *std.Io.Reader, buffer: []u8) Error!usize {
             const self: *const Readable = @ptrCast(@alignCast(context));
             var read: c_int = 0;
             c.libusb_bulk_transfer(self.device_handle, self.endpoint, buffer.ptr, @intCast(buffer.len), &read, self.timeout).result() catch |err| {
@@ -1497,24 +1500,24 @@ pub const ClaimedInterface = struct {
 
             return @intCast(read);
         }
-        fn readVec(self: *const Readable, data: [][]u8) Error!usize {
-            return self.readFn(data);
+        fn readVec(self: *std.Io.Reader, data: [][]u8) std.Io.Reader.Error!usize {
+            return readFn(self, data[0]) catch return error.ReadFailed;
         }
 
-        fn stream(self: *const Readable, w: *std.Io.Writer, limit: std.Io.Limit) std.Io.Reader.StreamError!usize {
+        fn stream(self: *std.Io.Reader, w: *std.Io.Writer, limit: std.Io.Limit) std.Io.Reader.StreamError!usize {
             _ = self;
             _ = w;
             _ = limit;
             @panic("TODO");
         }
 
-        fn discard(self: *const Readable, limit: std.Io.Limit) Error!usize {
+        fn discard(self: *std.Io.Reader, limit: std.Io.Limit) std.Io.Reader.Error!usize {
             _ = self;
             _ = limit;
             @panic("TODO");
         }
 
-        pub fn reader(self: *const Readable, buffer: []u8) std.Io.Reader {
+        pub fn reader(self: *Readable, buffer: []u8) *std.Io.Reader {
             self.interface = .{
                 .buffer = buffer,
                 .seek = 0,
@@ -1532,7 +1535,8 @@ pub const ClaimedInterface = struct {
     pub fn readable(self: ClaimedInterface, r: *std.Io.Reader, endpoint: Endpoint, timeout: u32) Readable {
         std.debug.assert(endpoint.direction == .input);
         return .{
-            .interface = r,
+            .in = r,
+            .interface = undefined,
             .device_handle = self.device_handle,
             .endpoint = endpoint.toU8(),
             .timeout = @intCast(timeout),
