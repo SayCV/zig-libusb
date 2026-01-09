@@ -1444,7 +1444,8 @@ pub const ClaimedInterface = struct {
 
         fn writeFn(context: *std.Io.Writer, bytes: []const u8, splat: usize) Error!usize {
             _ = splat;
-            const self: *const Writable = @ptrCast(@alignCast(context));
+            //const self: *const Writable = @ptrCast(@alignCast(context));
+            const self: *const Writable = @alignCast(@fieldParentPtr("interface", context));
             var written: c_int = 0;
             c.libusb_bulk_transfer(self.device_handle, self.endpoint, @constCast(bytes.ptr), @intCast(bytes.len), &written, self.timeout).result() catch |err| {
                 if (err != error.OperationTimedOut) {
@@ -1490,7 +1491,8 @@ pub const ClaimedInterface = struct {
         timeout: c_uint,
 
         fn readFn(context: *std.Io.Reader, buffer: []u8) Error!usize {
-            const self: *const Readable = @ptrCast(@alignCast(context));
+            // const self: *const Readable = @ptrCast(@alignCast(context));
+            const self: *const Readable = @alignCast(@fieldParentPtr("interface", context));
             var read: c_int = 0;
             c.libusb_bulk_transfer(self.device_handle, self.endpoint, buffer.ptr, @intCast(buffer.len), &read, self.timeout).result() catch |err| {
                 if (err != error.OperationTimedOut) {
