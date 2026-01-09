@@ -2,6 +2,8 @@ const std = @import("std");
 const testing = std.testing;
 const builtin = @import("builtin");
 
+const log = std.log.scoped(.libusb);
+
 pub const c = @import("./c.zig");
 
 test {
@@ -1494,14 +1496,17 @@ pub const ClaimedInterface = struct {
             // const self: *const Readable = @ptrCast(@alignCast(context));
             const self: *const Readable = @alignCast(@fieldParentPtr("interface", context));
             var read: c_int = 0;
+            // log.debug("timeout = {d}", .{@as(u32, @intCast(self.timeout))});
             c.libusb_bulk_transfer(self.device_handle, self.endpoint, buffer.ptr, @intCast(buffer.len), &read, self.timeout).result() catch |err| {
                 if (err != error.OperationTimedOut) {
                     return err;
                 }
+                return err;
             };
 
             return @intCast(read);
         }
+
         fn readVec(self: *std.Io.Reader, data: [][]u8) std.Io.Reader.Error!usize {
             return readFn(self, data[0]) catch return error.ReadFailed;
         }
