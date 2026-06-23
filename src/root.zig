@@ -378,7 +378,7 @@ pub const EndpointDescriptor = extern struct {
     /// for isochronous endpoints and correspond to libusb_iso_sync_type.
     /// Bits 4:5 are also only used for isochronous endpoints and correspond to
     /// libusb_iso_usage_type. Bits 6:7 are reserved.
-    bmAttributes: packed struct {
+    bmAttributes: packed struct(u8) {
         transfer_type: TransferType,
         iso_sync_type: ISOSyncType,
         iso_usage_type: ISOUsageType,
@@ -688,7 +688,7 @@ pub const USB20ExtensionDescriptor = extern struct {
     /// A value of one in a bit location indicates a feature is
     /// supported; a value of zero indicates it is not supported.
     /// See libusb_usb_2_0_extension_attributes.
-    bmAttributes: packed struct {
+    bmAttributes: packed struct(u8) {
         _0: u1,
 
         /// Supports Link Power Management (LPM)
@@ -719,7 +719,7 @@ pub const SSUSBDeviceCapabilityDescriptor = extern struct {
     /// A value of one in a bit location indicates a feature is
     /// supported; a value of zero indicates it is not supported.
     /// See libusb_ss_usb_device_capability_attributes.
-    bmAttributes: packed struct {
+    bmAttributes: packed struct(u8) {
         _0: u1,
 
         /// Supports Latency Tolerance Messages (LTM)
@@ -798,7 +798,7 @@ pub const PlatformDescriptor = extern struct {
 };
 
 /// Setup packet for control transfers.
-pub const ControlSetup = packed struct {
+pub const ControlSetup = packed struct(u8) {
     pub const RequestRecipient = enum(u2) {
         /// Device
         device,
@@ -833,7 +833,7 @@ pub const ControlSetup = packed struct {
     };
 
     /// Request type.
-    bmRequestType: packed struct {
+    bmRequestType: packed struct(u8) {
         recipient: RequestRecipient,
         type: RequestType,
         direction: RequestDirection,
