@@ -275,7 +275,7 @@ pub const DeviceDescriptor = extern struct {
 /// Bits 0:3 are the endpoint number. Bits 4:6 are reserved. Bit 7 indicates direction
 ///
 /// See https://libusb.sourceforge.io/api-1.0/structlibusb__endpoint__descriptor.html#a111d087a09cbeded8e15eda9127e23d2
-pub const Endpoint = packed struct {
+pub const Endpoint = packed struct(u8) {
     pub const Direction = enum(u1) {
         output,
         input,
