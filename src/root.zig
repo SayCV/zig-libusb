@@ -1292,7 +1292,7 @@ pub const InitOptions = struct {
     fn toInitOptionArray(self: InitOptions) @Tuple(&.{ [max]c.InitOption, usize }) {
         var init_options_arr: [max]c.InitOption = undefined;
         var option_count: usize = 0;
-        const InitOptionValueUnion = @typeInfo(c.InitOption).@"struct".fields[1].type;
+        const InitOptionValueUnion = @typeInfo(c.InitOption).@"struct".field_types[1];
         inline for (@typeInfo(InitOptions).@"struct".field_names) |field_name| {
             if (@field(self, field_name)) |value| {
                 init_options_arr[option_count] = .{
