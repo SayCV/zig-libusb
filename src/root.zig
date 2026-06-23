@@ -1287,17 +1287,17 @@ pub const InitOptions = struct {
     use_usbdk: ?void = null,
     no_device_discovery: ?void = null,
 
-    const max = @typeInfo(c.Option).@"enum".fields.len;
+    const max = @typeInfo(c.Option).@"enum".field_names.len;
 
-    fn toInitOptionArray(self: InitOptions) std.meta.Tuple(&.{ [max]c.InitOption, usize }) {
+    fn toInitOptionArray(self: InitOptions) @Tuple(&.{ [max]c.InitOption, usize }) {
         var init_options_arr: [max]c.InitOption = undefined;
         var option_count: usize = 0;
         const InitOptionValueUnion = @typeInfo(c.InitOption).@"struct".fields[1].type;
-        inline for (@typeInfo(InitOptions).@"struct".fields) |field| {
-            if (@field(self, field.name)) |value| {
+        inline for (@typeInfo(InitOptions).@"struct".field_names) |field_name| {
+            if (@field(self, field_name)) |value| {
                 init_options_arr[option_count] = .{
-                    .option = @field(c.Option, field.name),
-                    .value = @unionInit(InitOptionValueUnion, if (@TypeOf(value) == void) "void" else field.name, value),
+                    .option = @field(c.Option, field_name),
+                    .value = @unionInit(InitOptionValueUnion, if (@TypeOf(value) == void) "void" else field_name, value),
                 };
                 option_count += 1;
             }
@@ -1387,7 +1387,7 @@ pub const Device = opaque {
         return c.libusb_get_bus_number(self);
     }
 
-    pub fn getPortNumbers(self: *Device) !std.meta.Tuple(&.{ [7]u8, usize }) {
+    pub fn getPortNumbers(self: *Device) !@Tuple(&.{ [7]u8, usize }) {
         var ports: [7]u8 = undefined;
         const len = try c.libusb_get_port_numbers(self, &ports, 7).result();
         return .{ ports, @intCast(len) };
